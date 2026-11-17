@@ -1,0 +1,15 @@
+[project]
+name = "tpi2-ampliador"
+version = "0.1.0"
+description = "Ampliador de fotos chicas con un modelo de difusión, que muestra qué detalles inventó la IA"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "accelerate>=1.16.0",
+    "diffusers>=0.43.0",
+    "gradio>=6.32.0",
+    "numpy>=2.5.5",
+    "pillow>=13.0.0",
+    "torch==2.10.0",
+    "torchvision==0.25.0",
+    "transformers>=5.23.0",
+]

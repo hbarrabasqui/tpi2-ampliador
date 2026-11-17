@@ -1,0 +1,21 @@
+# Entorno de Python (lo recrea `uv sync`)
+.venv/
+__pycache__/
+*.pyc
+
+# Secretos: nunca al repo
+.env
+*.key
+hf_token*
+
+# Cachés de modelos y de Gradio
+.cache/
+huggingface/
+.gradio/
+flagged/
+
+# Sistema operativo y editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
