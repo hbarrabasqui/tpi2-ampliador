@@ -53,6 +53,7 @@ def probar_entrada():
     assert preparada.mode == "RGB" and achicada
     assert preparada.width % 8 == 0 and preparada.height % 8 == 0
     assert max(preparada.size) <= diffusion.lado_maximo()
+    assert preparada.width * preparada.height <= diffusion.area_maxima()
     print("OK entrada: PNG con transparencia, achicado y múltiplos de 8")
 
 

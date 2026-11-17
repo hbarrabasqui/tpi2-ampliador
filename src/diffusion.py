@@ -11,10 +11,14 @@ from PIL import Image
 
 MODELO = "stabilityai/stable-diffusion-x4-upscaler"
 
-# Lado máximo de la foto de entrada. Con GPU (T4 de Colab, 15 GB) 256 px
-# entra bien; en CPU se achica más para que no tarde demasiado.
+# Límites de la foto de entrada. La salida es 4x en cada lado (16x en área), así
+# que una entrada grande llena enseguida la memoria. Con GPU (T4 de Colab, 15 GB)
+# se admite hasta 256 px de lado y unos 40.000 píxeles (por ejemplo 200 x 200 o
+# 256 x 128); en CPU se achica más para que no tarde demasiado.
 LADO_MAXIMO_GPU = 256
+AREA_MAXIMA_GPU = 40_000
 LADO_MAXIMO_CPU = 128
+AREA_MAXIMA_CPU = 128 * 128
 
 # Frases que recibe el modelo según el tipo de foto. Van en inglés porque el
 # codificador de texto del modelo (CLIP) se entrenó con textos en inglés.
@@ -50,17 +54,21 @@ def cargar_modelo():
     return _pipe
 
 
+def area_maxima() -> int:
+    return AREA_MAXIMA_GPU if hay_gpu() else AREA_MAXIMA_CPU
+
+
 def preparar_entrada(imagen: Image.Image) -> tuple[Image.Image, bool]:
-    """Pasa a RGB, achica si supera el lado máximo y deja lados múltiplos de 8.
+    """Pasa a RGB, achica si supera el lado o el área máxima y deja lados múltiplos de 8.
 
     Devuelve la imagen preparada y si hubo que achicarla (para avisarle a la persona).
     """
     imagen = imagen.convert("RGB")  # quita transparencia (PNG) y modos raros
-    limite = lado_maximo()
-    achicada = max(imagen.size) > limite
+    escala = min(1.0, lado_maximo() / max(imagen.size), (area_maxima() / (imagen.width * imagen.height)) ** 0.5)
+    achicada = escala < 1.0
     if achicada:
-        imagen = imagen.copy()
-        imagen.thumbnail((limite, limite), Image.LANCZOS)
+        nuevo = (max(8, int(imagen.width * escala)), max(8, int(imagen.height * escala)))
+        imagen = imagen.resize(nuevo, Image.LANCZOS)  # LANCZOS: achica sin aliasing fuerte
     ancho = max(8, imagen.width - imagen.width % 8)
     alto = max(8, imagen.height - imagen.height % 8)
     if (ancho, alto) != imagen.size:
@@ -85,4 +93,7 @@ def ampliar(imagen: Image.Image, tipo_de_foto: str, libertad: int, semilla: int 
         noise_level=int(libertad),
         generator=generador,
     ).images[0]
+    if max(resultado.getextrema(), key=lambda canal: canal[1])[1] < 5:
+        # problema numérico conocido de float16: la imagen sale negra
+        raise RuntimeError("imagen negra")
     return resultado

@@ -68,8 +68,14 @@ def procesar(ruta, tipo_de_foto, libertad, semilla, progreso=gr.Progress()):
     inicio = time.time()
     try:
         con_ia = diffusion.ampliar(entrada, tipo_de_foto, libertad, semilla)
-    except Exception as error:  # memoria insuficiente u otro problema del modelo
-        raise gr.Error("No pude ampliar la foto. Probá con una más chica o reiniciá la app.") from error
+    except RuntimeError as error:
+        if diffusion.hay_gpu():
+            import torch
+            torch.cuda.empty_cache()  # libera la memoria de la GPU para el próximo intento
+        if "imagen negra" in str(error):
+            raise gr.Error("El modelo devolvió una imagen negra (un problema numérico conocido). "
+                           "Probá con otra semilla en Opciones avanzadas.") from error
+        raise gr.Error("No pude ampliar la foto (probablemente falta memoria). Probá con una foto más chica.") from error
     segundos = time.time() - inicio
 
     progreso(0.75, desc="Comparando con la ampliación clásica...")
@@ -140,7 +146,7 @@ def crear_interfaz() -> gr.Blocks:
 
         with gr.Row():
             with gr.Column(scale=1):
-                entrada = gr.Image(type="filepath", label="Tu foto (chica, de hasta ~256 px de lado)")
+                entrada = gr.Image(type="filepath", label="Tu foto (chica: hasta unos 200 × 200 px)")
                 tipo = gr.Radio(list(diffusion.PROMPTS), value="Personas o retratos",
                                 label="¿Qué muestra la foto?",
                                 info="Le da una pista al modelo y ajusta los avisos.")

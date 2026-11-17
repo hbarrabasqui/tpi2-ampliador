@@ -78,7 +78,7 @@ Persona usuaria
    ▼
 Interfaz Gradio (app.py)
    │
-   ├─► preparar_entrada: RGB, achica a ≤256 px, lados múltiplos de 8   (src/diffusion.py)
+   ├─► preparar_entrada: RGB, achica si es grande, lados múltiplos de 8   (src/diffusion.py)
    │
    ├─► bicúbica x4  ──────────────┐  línea base sin IA                  (src/honesty.py)
    ├─► difusión x4 (upscaler) ────┤  detalle inventado                  (src/diffusion.py)
@@ -133,7 +133,7 @@ Abrí [`colab/ejecutar_en_colab.ipynb`](colab/ejecutar_en_colab.ipynb) en Colab,
 Es el estándar para demos de modelos de Hugging Face, trae un comparador con deslizador (`ImageSlider`) y en Colab da un link público sin configurar nada.
 
 ### Por qué `stable-diffusion-x4-upscaler`
-Es el modelo de difusión de super-resolución que propone la consigna, no requiere aceptar licencia ni token, y entra en una T4 gratuita con imágenes de hasta 256 px de lado. Su parámetro `noise_level` funciona como un control natural de "cuánto puede inventar".
+Es el modelo de difusión de super-resolución que propone la consigna, no requiere aceptar licencia ni token, y entra en una T4 gratuita con imágenes chicas (hasta unos 40.000 píxeles). Su parámetro `noise_level` funciona como un control natural de "cuánto puede inventar".
 
 ### Por qué RT-DETR, y por qué contra la bicúbica
 Para la persona usuaria es más útil saber "¿apareció o desapareció alguien?" que un puntaje abstracto de nitidez. El detector se aplica a la ampliación clásica y a la ampliación con IA: tienen el mismo tamaño y salen de la misma foto, así que si las detecciones cambian, el cambio lo introdujo el modelo. Límite: el detector confirma que hay una persona, no que la cara sea la de esa persona.
@@ -173,7 +173,7 @@ Es la última versión publicada en PyPI compilada para CUDA 12.8. Las siguiente
 
 ## Limitaciones conocidas
 
-- Funciona mejor con fotos chicas (de 64 a 256 px de lado). Las más grandes se achican antes de procesar.
+- Funciona mejor con fotos chicas (de 64 a 256 px de lado, hasta unos 40.000 píxeles, por ejemplo 200 × 200). Las más grandes se achican antes de procesar.
 - Tiempo de procesamiento: _[completar con lo medido en la T4]_; en CPU, varios minutos.
 - **Caras, letras y números**: el modelo los inventa. No sirve para identificar personas ni leer textos.
 - El detector RT-DETR solo conoce 80 tipos de objetos y falla con imágenes muy chicas.
