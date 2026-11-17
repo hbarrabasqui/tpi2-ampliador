@@ -5,9 +5,17 @@ al achicarlo, se parece a la foto de entrada. Por eso todo lo que devuelve
 este módulo se trata en la app como una reconstrucción, no como un dato.
 """
 
+import warnings
+
 import torch
 from diffusers import StableDiffusionUpscalePipeline
+from diffusers.utils import logging as registro_diffusers
 from PIL import Image
+
+# Los avisos internos de diffusers (por ejemplo sobre float32 en el VAE) no afectan
+# el resultado y ensucian la consola; se muestran solo los errores.
+registro_diffusers.set_verbosity_error()
+warnings.filterwarnings("ignore", category=FutureWarning, module="diffusers")
 
 MODELO = "stabilityai/stable-diffusion-x4-upscaler"
 
