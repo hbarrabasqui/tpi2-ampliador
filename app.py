@@ -64,7 +64,11 @@ solo **reconoce personas y objetos** y les dibuja un **recuadro verde con su nom
 
 Le mostramos las dos versiones de tu foto. Si en las dos reconoce lo mismo, es una buena señal.
 Si reconoce cosas distintas, quiere decir que la IA que agrandó la foto **cambió algo importante**.
-Ojo: esta segunda IA también puede equivocarse.
+
+**Qué tan confiable es:** esta segunda IA solo conoce **80 tipos de cosas** (personas, animales comunes, autos,
+muebles, objetos de la casa). Es **muy buena reconociendo personas**, que suele ser lo más importante de una foto.
+Con lo demás se equivoca más: si ve algo que no conoce, como una ventana o un adorno, puede confundirlo con otra cosa
+(por ejemplo, un reloj). El porcentaje junto a cada nombre dice qué tan segura está: **por debajo de 70 %, tomalo como una duda**.
 """
 
 TITULO_DESCARGA = """
