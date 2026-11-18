@@ -52,12 +52,19 @@ def _nombre(etiqueta: str) -> str:
 
 
 def dibujar_cajas(imagen: Image.Image, detecciones: list[dict]) -> Image.Image:
+    """Dibuja un recuadro verde por cada cosa reconocida, con su nombre en un cartel legible."""
+    from src.honesty import fuente, texto_seguro  # misma fuente (con tildes) que el resto de la app
+
     copia = imagen.convert("RGB").copy()
     dibujo = ImageDraw.Draw(copia)
+    letra = fuente(max(14, copia.width // 30))
     for d in detecciones:
         caja = d["box"]
-        dibujo.rectangle([caja["xmin"], caja["ymin"], caja["xmax"], caja["ymax"]], outline=(0, 255, 120), width=2)
-        dibujo.text((caja["xmin"] + 3, caja["ymin"] + 2), f"{_nombre(d['label'])} {d['score']:.2f}", fill=(0, 255, 120))
+        dibujo.rectangle([caja["xmin"], caja["ymin"], caja["xmax"], caja["ymax"]], outline=(0, 230, 110), width=3)
+        texto = texto_seguro(f"{_nombre(d['label'])} ({d['score']:.0%} seguro)", letra)
+        izq, arriba, der, abajo = dibujo.textbbox((caja["xmin"] + 4, caja["ymin"] + 4), texto, font=letra)
+        dibujo.rectangle([izq - 3, arriba - 2, der + 3, abajo + 2], fill=(0, 120, 60))
+        dibujo.text((caja["xmin"] + 4, caja["ymin"] + 4), texto, fill="white", font=letra)
     return copia
 
 
@@ -75,11 +82,12 @@ def comparar(sin_ia: Image.Image, con_ia: Image.Image) -> dict:
     """Detecta objetos en ambas versiones y resume las diferencias en lenguaje simple."""
     antes, despues = detectar(sin_ia), detectar(con_ia)
     conteo_antes, conteo_despues = _contar(antes), _contar(despues)
-    cambios = []
+    cambios, aparecidos = [], []
     for nombre in sorted(set(conteo_antes) | set(conteo_despues)):
         a, b = conteo_antes[nombre], conteo_despues[nombre]
         if b > a:
             cambios.append(f"aparecieron {b - a} {nombre}")
+            aparecidos.append(nombre)
         elif a > b:
             cambios.append(f"desaparecieron {a - b} {nombre}")
     return {
@@ -88,5 +96,7 @@ def comparar(sin_ia: Image.Image, con_ia: Image.Image) -> dict:
         "texto_sin_ia": _describir(conteo_antes),
         "texto_con_ia": _describir(conteo_despues),
         "cambios": cambios,  # texto simple: "aparecieron 1 perro"
+        "aparecidos": aparecidos,  # nombres de lo que solo se reconoce en la versión con IA
+        "imagen_sin_ia_cajas": dibujar_cajas(sin_ia, antes),
         "imagen_con_cajas": dibujar_cajas(con_ia, despues),
     }

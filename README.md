@@ -54,11 +54,11 @@ Algo más sutil: en el retrato, la **mancha oscura sobre el ojo** es daño de la
 **Cómo se ve en la app.**
 - Comparador con deslizador: izquierda sin IA (bicúbica), derecha con IA.
 - **Mapa de lo inventado**: resta píxel a píxel entre las dos ampliaciones; lo claro es lo que agregó el modelo.
-- **Detecciones con y sin IA**, con un aviso cuando aparece o desaparece algo.
+- **Chequeo con una segunda IA** (RT-DETR): las dos versiones lado a lado con los recuadros de lo que reconoce, y un aviso en palabras simples cuando aparece o desaparece algo.
 - Control de **libertad para inventar** (`noise_level`) y **semilla**.
 - Aviso fijo arriba de todo y aviso específico según el tipo de foto (caras, edificios).
 
-En la app, el resumen se lo explica a la persona usuaria sin tecnicismos: *"Atención: la IA cambió mucho a las personas. En tu foto agrandada sin IA se reconoce 1 persona; en la versión con IA, la segunda IA ya no reconoce a ninguna persona… Mirá bien las caras antes de compartir la foto."* El detalle técnico (que RT-DETR vio un perro, con el recuadro) queda en una sección plegable, "Detalles técnicos", para no confundir a quien no sabe qué es un detector de objetos.
+En la app, el paso 3 ("Chequeo con una segunda IA") muestra las dos fotos lado a lado con sus recuadros (persona 90 % / perro 59 %) y se lo explica a la persona usuaria sin tecnicismos: *"Atención: la IA cambió mucho a las personas. En la versión con IA, la segunda IA ya no reconoce a la persona que sí reconoce en la versión sin IA. En su lugar ve: perro. Eso no está en tu foto: la segunda IA se confundió porque la cara o el cuerpo quedaron muy cambiados."*
 
 **Advertencia a la persona usuaria.** "Esta herramienta no recupera lo que tu foto perdió. Un modelo de IA inventa detalles creíbles. Usá el resultado para mirar o compartir, no como prueba de cómo era algo o alguien." El archivo descargado lleva una franja visible y metadatos que dicen "Ampliada con IA".
 

@@ -57,18 +57,19 @@ Este dibujo marca las diferencias entre las dos versiones de arriba.
 **Lo oscuro** quedó casi igual a tu foto. **Lo claro** es donde la IA dibujó detalles por su cuenta: ahí conviene mirar con más desconfianza.
 """
 
-TITULO_DESCARGA = """
-### 4. Descargá tu foto
-La foto descargada lleva abajo la leyenda *"Ampliada con IA"*, para que nadie la confunda con la original.
+TITULO_CHEQUEO = """
+### 3. Chequeo con una segunda IA
+Para controlar el trabajo de la IA que agrandó tu foto, usamos **otra IA distinta**. Esta no agranda ni cambia nada:
+solo **reconoce personas y objetos** y les dibuja un **recuadro verde con su nombre**.
+
+Le mostramos las dos versiones de tu foto. Si en las dos reconoce lo mismo, es una buena señal.
+Si reconoce cosas distintas, quiere decir que la IA que agrandó la foto **cambió algo importante**.
+Ojo: esta segunda IA también puede equivocarse.
 """
 
-TITULO_TECNICO = """
-Para chequear el trabajo de la IA que agranda, la herramienta usa **una segunda IA** (se llama *RT-DETR*)
-que sabe reconocer personas y objetos. Mira la foto agrandada **sin IA** y la agrandada **con IA**, y compara lo que reconoce en cada una.
-Si reconoce cosas distintas, es una señal de que la primera IA cambió algo.
-
-Esta segunda IA también se equivoca: a veces confunde cosas (por ejemplo, puede tomar una cara modificada por otra cosa).
-Abajo se ve, con recuadros verdes, lo que reconoció en la versión con IA.
+TITULO_DESCARGA = """
+### 5. Descargá tu foto
+La foto descargada lleva abajo la leyenda *"Ampliada con IA"*, para que nadie la confunda con la original.
 """
 
 CONSEJOS_POR_TIPO = {
@@ -134,30 +135,36 @@ def procesar(ruta, tipo_de_foto, libertad, semilla, progreso=gr.Progress()):
 
     resumen = _armar_resumen(entrada, con_ia, fue_achicada, fraccion_cambiada,
                              diferencia_coherencia, deteccion, tipo_de_foto, segundos)
-    detalle_tecnico = (f"- En la foto agrandada **sin IA** reconoció: {deteccion['texto_sin_ia']}.\n"
-                       f"- En la foto agrandada **con IA** reconoció: {deteccion['texto_con_ia']}.")
-    return (sin_ia, con_ia), mapa, resumen, ruta_salida, deteccion["imagen_con_cajas"], detalle_tecnico
+    return ((sin_ia, con_ia), mapa, deteccion["imagen_sin_ia_cajas"], deteccion["imagen_con_cajas"],
+            _texto_chequeo(deteccion), resumen, ruta_salida)
 
 
 def _texto_chequeo(deteccion: dict) -> str:
-    """Resultado del chequeo con la segunda IA, en palabras simples y sin nombres de objetos raros."""
+    """Conclusión del chequeo con la segunda IA, en palabras simples."""
     antes, despues = deteccion["personas_sin_ia"], deteccion["personas_con_ia"]
-    if antes != despues:
-        if despues < antes:
-            ahora = "ya no reconoce a ninguna persona" if despues == 0 else f"reconoce solo {_personas(despues)}"
-            return (f"**⚠ Atención: la IA cambió mucho a las personas.** En tu foto agrandada sin IA se reconoce "
-                    f"{_personas(antes)}; en la versión con IA, la segunda IA {ahora}. "
-                    "Eso quiere decir que la cara o el cuerpo quedaron tan cambiados que ya no parecen una persona "
-                    "para la computadora. **Mirá bien las caras antes de compartir la foto.**")
-        return (f"**⚠ Atención:** en la versión con IA se reconocen más personas ({_personas(despues)}) que en tu "
-                f"foto ({_personas(antes)}). La IA pudo haber dibujado algo que parece una persona. Revisá la foto.")
-    if deteccion["cambios"]:
-        return ("**⚠ Atención:** la segunda IA ve cosas distintas en las dos versiones. La IA que agrandó la foto "
-                "pudo haber agregado o borrado algún detalle. Revisá la foto con cuidado.")
-    if antes:
-        return (f"En las dos versiones se reconoce {_personas(antes)}. Es una buena señal, pero no garantiza "
-                "que las caras sean idénticas a las reales.")
-    return "La segunda IA no encontró diferencias importantes entre las dos versiones."
+    lineas = [f"- En la foto agrandada **sin IA** reconoce: **{deteccion['texto_sin_ia']}**.",
+              f"- En la foto agrandada **con IA** reconoce: **{deteccion['texto_con_ia']}**."]
+    if despues < antes:
+        confusion = ""
+        if deteccion["aparecidos"]:
+            confusion = (f" En su lugar ve: {', '.join(deteccion['aparecidos'])}. **Eso no está en tu foto:** "
+                         "la segunda IA se confundió porque la cara o el cuerpo quedaron muy cambiados.")
+        lineas.append(f"\n**⚠ Atención: la IA cambió mucho a las personas.** En la versión con IA, la segunda IA "
+                      f"ya no reconoce {'a la persona' if antes - despues == 1 else f'a {antes - despues} de las personas'} "
+                      f"que sí reconoce en la versión sin IA.{confusion} "
+                      "**Mirá bien las caras antes de compartir la foto.**")
+    elif despues > antes:
+        lineas.append("\n**⚠ Atención:** en la versión con IA reconoce más personas que en tu foto. "
+                      "La IA pudo haber dibujado algo que parece una persona. Revisá la foto.")
+    elif deteccion["cambios"]:
+        lineas.append(f"\n**⚠ Atención:** en la versión con IA reconoce cosas que en tu foto no "
+                      f"({', '.join(deteccion['aparecidos']) or 'o deja de reconocer algunas'}). "
+                      "La IA que agrandó la foto pudo haber agregado o cambiado detalles, o la segunda IA se confundió. "
+                      "Revisá esa parte de la foto.")
+    else:
+        lineas.append("\nReconoce lo mismo en las dos versiones: buena señal. Igual, eso no garantiza que "
+                      "los detalles (una cara, una letra) sean los verdaderos.")
+    return "\n".join(lineas)
 
 
 def _personas(cantidad: int) -> str:
@@ -175,7 +182,7 @@ def _texto_coherencia(diferencia: float) -> str:
 
 
 def _armar_resumen(entrada, con_ia, fue_achicada, fraccion, coherencia, deteccion, tipo, segundos):
-    lineas = ["### 3. Resumen y consejos", "**Qué pasó con tu foto**"]
+    lineas = ["### 4. Resumen y consejos", "**Qué pasó con tu foto**"]
     if fue_achicada:
         lineas.append("- Tu foto era grande y primero la achiqué un poco, porque la IA trabaja mejor con fotos chicas.")
     lineas.append(f"- Ahora es **4 veces más grande** (pasó de {entrada.width} × {entrada.height} "
@@ -183,8 +190,8 @@ def _armar_resumen(entrada, con_ia, fue_achicada, fraccion, coherencia, deteccio
     lineas.append(f"- La IA dibujó detalles nuevos en más o menos el **{fraccion:.0%}** de la foto "
                   "(las zonas claras del punto 2).")
     lineas.append(f"- {_texto_coherencia(coherencia)}")
-    lineas.append("\n**Chequeo automático** (una segunda IA revisa si siguen estando las mismas personas)")
-    lineas.append(f"- {_texto_chequeo(deteccion)}")
+    if deteccion["cambios"]:
+        lineas.append("- **La segunda IA encontró diferencias** entre las dos versiones (ver el punto 3).")
     lineas.append("\n**Antes de usar la foto**")
     lineas.append(f"- {CONSEJOS_POR_TIPO.get(tipo, CONSEJOS_POR_TIPO['Objetos u otra cosa'])}")
     lineas.append("- Si hay **letras o números**, la IA puede inventarlos o deformarlos.")
@@ -239,16 +246,17 @@ def crear_interfaz() -> gr.Blocks:
                 comparador = gr.ImageSlider(label="Izquierda: sin IA · Derecha: con IA", type="pil")
                 gr.Markdown(TITULO_MAPA)
                 mapa = gr.Image(label="Lo claro es lo que inventó la IA", type="pil")
+                gr.Markdown(TITULO_CHEQUEO)
+                with gr.Row():
+                    cajas_sin_ia = gr.Image(label="Lo que reconoce en la foto agrandada SIN IA", type="pil")
+                    cajas_con_ia = gr.Image(label="Lo que reconoce en la foto agrandada CON IA", type="pil")
+                chequeo = gr.Markdown()
                 resumen = gr.Markdown()
                 gr.Markdown(TITULO_DESCARGA)
                 descarga = gr.File(label="Tu foto agrandada")
-                with gr.Accordion("Detalles técnicos: cómo se hace el chequeo automático", open=False):
-                    gr.Markdown(TITULO_TECNICO)
-                    cajas = gr.Image(label="Lo que reconoció la segunda IA en la foto agrandada con IA", type="pil")
-                    detalle = gr.Markdown()
 
         boton.click(procesar, [entrada, tipo, libertad, semilla],
-                    [comparador, mapa, resumen, descarga, cajas, detalle])
+                    [comparador, mapa, cajas_sin_ia, cajas_con_ia, chequeo, resumen, descarga])
     return demo
 
 
