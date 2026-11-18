@@ -70,10 +70,10 @@ Algo más sutil: en el retrato, la **mancha oscura sobre el ojo** es daño de la
 ![Verdad, sin IA y tres semillas](docs/img/retrato_semillas.png)
 
 **Cómo se ve en la app.**
-- Comparador con deslizador: izquierda sin IA (bicúbica), derecha con IA.
-- **Mapa de lo inventado**: resta píxel a píxel entre las dos ampliaciones; lo claro es lo que agregó el modelo.
+- **1. Compará:** comparador con una línea que se arrastra; izquierda sin IA (bicúbica), derecha con IA.
+- **2. ¿Dónde inventó la IA?:** mapa que resta píxel a píxel las dos ampliaciones; lo claro es lo que agregó el modelo.
 - **Chequeo con una segunda IA** (RT-DETR): las dos versiones lado a lado con los recuadros de lo que reconoce, y un aviso en palabras simples cuando aparece o desaparece algo.
-- Control de **libertad para inventar** (`noise_level`) y **semilla**.
+- Controles **"¿Cuánto puede inventar la IA?"** (`noise_level`) y **"Variante"** (la semilla, en Opciones avanzadas).
 - Aviso fijo arriba de todo y aviso específico según el tipo de foto (caras, edificios).
 
 En la app, el paso 3 ("Chequeo con una segunda IA") muestra las dos versiones lado a lado con sus recuadros. Con el valor por defecto (libertad 20, variante 0) el resultado se repite siempre: la segunda IA reconoce una persona sin IA y un perro con IA, y la app se lo explica a la persona usuaria sin tecnicismos: *"Atención: la IA cambió mucho a las personas. En la versión con IA, la segunda IA ya no reconoce a la persona que sí reconoce en la versión sin IA. En su lugar ve: perro. Eso no está en tu foto: la segunda IA se confundió porque la cara o el cuerpo quedaron muy cambiados."*
@@ -161,8 +161,8 @@ Abrí [`colab/ejecutar_en_colab.ipynb`](colab/ejecutar_en_colab.ipynb) en Colab,
 1. Abrí la app.
 2. Subí una foto chica o elegí un ejemplo.
 3. Indicá qué muestra la foto y cuánta libertad le das al modelo.
-4. Tocá **Ampliar**.
-5. Mové el deslizador del comparador, mirá el mapa de lo inventado y leé el informe.
+4. Tocá **Agrandar**.
+5. Arrastrá la línea del comparador (paso 1), mirá dónde inventó la IA (paso 2), el chequeo con la segunda IA (paso 3) y el resumen (paso 4).
 6. Descargá el resultado (lleva la leyenda "Ampliada con IA").
 
 La captura del principio muestra la app después de ampliar el retrato de ejemplo en Colab (T4): la ampliación tardó 5 segundos.
@@ -188,7 +188,7 @@ Es la última versión publicada en PyPI compilada para CUDA 12.8. Las siguiente
 
 **Lenguaje simple**: la persona usuaria no tiene conocimientos técnicos, así que la app no usa jerga: dice "agrandada de forma común, sin IA" en lugar de "bicúbica", y "otra IA que reconoce personas y objetos" en lugar de "RT-DETR". Los nombres técnicos quedan en este README.
 **Transparencia**: la app dice qué hace en cada paso ("La IA está agrandando tu foto e inventando detalles...") y muestra al lado lo que haría un método sin IA.
-**Control**: libertad para inventar, semilla, tipo de foto, y comparador con deslizador.
+**Control**: cuánto puede inventar la IA, variante, tipo de foto, y comparador con una línea que se arrastra.
 **Explicabilidad**: informe en lenguaje simple: cuántos píxeles nuevos hay, qué porcentaje cambió el modelo, si respetó la foto, qué detectó.
 **Honestidad sobre lo generado**: nunca dice "recuperar"; aviso fijo, avisos por tipo de foto, mapa de lo inventado y leyenda en el archivo exportado.
 **Manejo de errores**: mensajes como "La foto pesa 15 MB. Probá con una de menos de 10 MB." o "No pude leer ese archivo como imagen. Probá con un JPG o PNG."
