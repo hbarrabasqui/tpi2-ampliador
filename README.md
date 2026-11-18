@@ -4,6 +4,8 @@
 
 ![La app con el retrato de 1860: comparador, mapa de lo inventado, detecciones e informe](docs/img/app.png)
 
+![Final del informe: verificación con RT-DETR y avisos antes de usar la foto](docs/img/app_avisos.png)
+
 ## Descripción
 
 Cuando una foto es chica, la información que le falta **no existe más**. Las herramientas de "mejorar foto" con IA no la recuperan: la **inventan** de forma creíble. El resultado se ve nítido y convincente, pero una cara, una letra o una ventana pueden no ser las verdaderas.
