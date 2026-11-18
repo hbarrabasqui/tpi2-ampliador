@@ -165,7 +165,8 @@ Es la última versión publicada en PyPI compilada para CUDA 12.8. Las siguiente
 
 ### Principios de Human-AI Interaction aplicados
 
-**Transparencia**: la app dice qué hace en cada paso ("Ampliando con el modelo de difusión (inventa detalle plausible)...") y muestra lo que haría un método sin IA al lado.
+**Lenguaje simple**: la persona usuaria no tiene conocimientos técnicos, así que la app no usa jerga: dice "agrandada de forma común, sin IA" en lugar de "bicúbica", y "otra IA que reconoce personas y objetos" en lugar de "RT-DETR". Los nombres técnicos quedan en este README.
+**Transparencia**: la app dice qué hace en cada paso ("La IA está agrandando tu foto e inventando detalles...") y muestra al lado lo que haría un método sin IA.
 **Control**: libertad para inventar, semilla, tipo de foto, y comparador con deslizador.
 **Explicabilidad**: informe en lenguaje simple: cuántos píxeles nuevos hay, qué porcentaje cambió el modelo, si respetó la foto, qué detectó.
 **Honestidad sobre lo generado**: nunca dice "recuperar"; aviso fijo, avisos por tipo de foto, mapa de lo inventado y leyenda en el archivo exportado.

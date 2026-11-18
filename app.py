@@ -19,7 +19,7 @@ CARPETA_EJEMPLOS = os.path.join(os.path.dirname(__file__), "assets", "ejemplos")
 
 AVISO_PRINCIPAL = (
     "**Importante:** esta herramienta *no recupera* lo que tu foto perdió. "
-    "Un modelo de IA **inventa** detalles creíbles para que la foto ampliada se vea nítida. "
+    "La IA **inventa** detalles creíbles para que la foto agrandada se vea nítida. "
     "Usá el resultado para mirar o compartir, **no como prueba** de cómo era algo o alguien."
 )
 
@@ -29,10 +29,10 @@ AVISOS_POR_TIPO = {
         "o directamente parecerse a otra persona. Compará con otras fotos antes de compartirla."
     ),
     "Edificios o paisajes": (
-        "Ventanas, ladrillos, hojas y texturas finas fueron **dibujados por el modelo**: "
+        "Ventanas, ladrillos, hojas y texturas finas fueron **dibujados por la IA**: "
         "la forma general viene de tu foto, el detalle no."
     ),
-    "Objetos u otra cosa": "El detalle fino (texturas, bordes nítidos) fue **generado por el modelo**.",
+    "Objetos u otra cosa": "El detalle fino (texturas, bordes nítidos) fue **inventado por la IA**.",
 }
 
 
@@ -51,10 +51,10 @@ def _abrir_imagen(ruta: str) -> Image.Image:
 
 def _interpretar_coherencia(diferencia: float) -> str:
     if diferencia < 6:
-        return "el modelo **respetó** lo que había en tu foto"
+        return "la IA **respetó** las formas y colores de tu foto"
     if diferencia < 15:
-        return "el modelo **cambió un poco** tu foto (colores o formas)"
-    return "el modelo **se alejó bastante** de tu foto: revisá el resultado con cuidado"
+        return "la IA **cambió un poco** tu foto (algunos colores o formas)"
+    return "la IA **se alejó bastante** de tu foto: revisá el resultado con cuidado"
 
 
 def procesar(ruta, tipo_de_foto, libertad, semilla, progreso=gr.Progress()):
@@ -64,7 +64,7 @@ def procesar(ruta, tipo_de_foto, libertad, semilla, progreso=gr.Progress()):
     entrada, fue_achicada = diffusion.preparar_entrada(original)
     sin_ia = honesty.bicubica(entrada)
 
-    progreso(0.15, desc="Ampliando con el modelo de difusión (inventa detalle plausible)...")
+    progreso(0.15, desc="La IA está agrandando tu foto e inventando detalles...")
     inicio = time.time()
     try:
         con_ia = diffusion.ampliar(entrada, tipo_de_foto, libertad, semilla)
@@ -73,16 +73,16 @@ def procesar(ruta, tipo_de_foto, libertad, semilla, progreso=gr.Progress()):
             import torch
             torch.cuda.empty_cache()  # libera la memoria de la GPU para el próximo intento
         if "imagen negra" in str(error):
-            raise gr.Error("El modelo devolvió una imagen negra (un problema numérico conocido). "
-                           "Probá con otra semilla en Opciones avanzadas.") from error
+            raise gr.Error("La IA devolvió una imagen negra (es un error conocido). "
+                           "Probá con otra variante en Opciones avanzadas.") from error
         raise gr.Error("No pude ampliar la foto (probablemente falta memoria). Probá con una foto más chica.") from error
     segundos = time.time() - inicio
 
-    progreso(0.75, desc="Comparando con la ampliación clásica...")
+    progreso(0.75, desc="Comparando con la foto agrandada sin IA...")
     mapa, fraccion_cambiada = honesty.mapa_de_diferencias(con_ia, sin_ia)
     diferencia_coherencia = honesty.coherencia(entrada, con_ia)
 
-    progreso(0.85, desc="Buscando personas y objetos en ambas versiones (RT-DETR)...")
+    progreso(0.85, desc="Otra IA está buscando personas y objetos para chequear...")
     deteccion = analysis.comparar(sin_ia, con_ia)
 
     ruta_salida = os.path.join(tempfile.mkdtemp(), "foto_ampliada_con_IA.png")
@@ -94,33 +94,34 @@ def procesar(ruta, tipo_de_foto, libertad, semilla, progreso=gr.Progress()):
 
 
 def _armar_informe(entrada, con_ia, fue_achicada, fraccion, coherencia, deteccion, tipo, segundos):
-    lineas = ["### Qué hizo el sistema"]
+    # Lenguaje simple: la persona usuaria no tiene conocimientos técnicos.
+    # Los nombres técnicos (bicúbica, RT-DETR, difusión) están en el README.
+    lineas = ["### Qué pasó con tu foto"]
     if fue_achicada:
-        lineas.append(f"- Tu foto era grande: la achiqué a **{entrada.width} × {entrada.height} px** antes de ampliarla, "
-                      "para que entre en la memoria del equipo.")
-    lineas.append(f"- Pasó de **{entrada.width} × {entrada.height}** a **{con_ia.width} × {con_ia.height} px**: "
-                  "16 veces más píxeles. **Esa información nueva no estaba en tu foto.** "
-                  f"(Tardó {segundos:.0f} s.)")
-    lineas.append(f"- Comparado con una ampliación clásica sin IA (bicúbica), el modelo cambió de forma notable "
-                  f"el **{fraccion:.0%}** de la imagen. En el mapa, **lo claro es detalle inventado**.")
-    lineas.append(f"- Al volver a achicar el resultado al tamaño de tu foto, la diferencia promedio es "
-                  f"**{coherencia:.1f}** (en una escala de 0 a 255): {_interpretar_coherencia(coherencia)}. "
-                  "Esto dice si respetó tu foto, **no** si el detalle nuevo es real.")
+        lineas.append(f"- Tu foto era grande: primero la achiqué a {entrada.width} × {entrada.height} puntos, "
+                      "porque la IA trabaja con fotos chicas.")
+    lineas.append(f"- Ahora es **4 veces más grande** de cada lado ({con_ia.width} × {con_ia.height} puntos). "
+                  f"**Todo ese detalle nuevo no estaba en tu foto.** (Tardó {segundos:.0f} segundos.)")
+    lineas.append(f"- La IA agregó o cambió detalles en un **{fraccion:.0%}** de la foto. "
+                  "En la imagen *\"Dónde inventó la IA\"*, **las zonas claras son las inventadas**.")
+    lineas.append(f"- Comparando el resultado achicado con tu foto: {_interpretar_coherencia(coherencia)}. "
+                  "Ojo: eso no quiere decir que los detalles nuevos sean verdaderos.")
 
-    lineas.append("\n### Verificación con un detector de objetos (RT-DETR)")
-    lineas.append(f"- Sin IA encontró: {deteccion['texto_sin_ia']}.")
-    lineas.append(f"- Con IA encontró: {deteccion['texto_con_ia']}.")
+    lineas.append("\n### Chequeo con otra IA")
+    lineas.append("Otra IA, que reconoce personas y objetos, miró las dos versiones:")
+    lineas.append(f"- En la agrandada **sin IA** vio: {deteccion['texto_sin_ia']}.")
+    lineas.append(f"- En la agrandada **con IA** vio: {deteccion['texto_con_ia']}.")
     if deteccion["cambios"]:
-        lineas.append(f"- **Atención: {'; '.join(deteccion['cambios'])}.** El modelo pudo haber agregado o borrado algo. "
-                      "(También puede ser que el detector reconozca mejor una imagen más nítida.)")
+        lineas.append(f"- **Atención: {'; '.join(deteccion['cambios'])}.** La IA que agrandó la foto pudo haber "
+                      "cambiado algo importante. Miralo con cuidado. (También puede ser un error de la IA que chequea.)")
     else:
-        lineas.append("- No aparecieron ni desaparecieron objetos. Ojo: esto no garantiza que los detalles "
+        lineas.append("- No apareció ni desapareció nada. Igual, eso no garantiza que los detalles "
                       "(una cara, una letra) sean los verdaderos.")
 
     lineas.append("\n### Antes de usar la foto")
     lineas.append(f"- {AVISOS_POR_TIPO.get(tipo, AVISOS_POR_TIPO['Objetos u otra cosa'])}")
-    lineas.append("- Si hay **letras o números**, el modelo puede inventarlos o deformarlos.")
-    lineas.append("- El archivo que descargás lleva la leyenda *\"Ampliada con IA\"* para que nadie lo confunda con el original.")
+    lineas.append("- Si hay **letras o números**, la IA puede inventarlos o deformarlos.")
+    lineas.append("- La foto que descargás lleva la leyenda *\"Ampliada con IA\"* para que nadie la confunda con la original.")
     return "\n".join(lineas)
 
 
@@ -140,8 +141,8 @@ def _ejemplos():
 def crear_interfaz() -> gr.Blocks:
     with gr.Blocks(title="Ampliador honesto de fotos") as demo:
         gr.Markdown("# Ampliador honesto de fotos chicas\n"
-                    "Subí una foto de baja resolución y la amplío **4 veces** con un modelo de IA. "
-                    "Te muestro qué agregó el modelo por su cuenta.")
+                    "Subí una foto chica o de baja calidad y la agrando **4 veces** con inteligencia artificial (IA). "
+                    "Te muestro qué detalles agregó la IA por su cuenta.")
         gr.Markdown(AVISO_PRINCIPAL)
 
         with gr.Row():
@@ -149,24 +150,24 @@ def crear_interfaz() -> gr.Blocks:
                 entrada = gr.Image(type="filepath", label="Tu foto (chica: hasta unos 200 × 200 px)")
                 tipo = gr.Radio(list(diffusion.PROMPTS), value="Personas o retratos",
                                 label="¿Qué muestra la foto?",
-                                info="Le da una pista al modelo y ajusta los avisos.")
+                                info="Le da una pista a la IA y ajusta los consejos.")
                 libertad = gr.Slider(0, 100, value=20, step=5,
-                                     label="Libertad del modelo para inventar",
-                                     info="Bajo: se pega más a tu foto. Alto: inventa más detalle (y se equivoca más).")
+                                     label="Cuánto puede inventar la IA",
+                                     info="Poco: se parece más a tu foto. Mucho: más detalle, pero inventa más y se equivoca más.")
                 with gr.Accordion("Opciones avanzadas", open=False):
-                    semilla = gr.Number(value=0, precision=0, label="Semilla",
-                                        info="Con la misma semilla el resultado se repite. Cambiala para ver otra invención posible.")
+                    semilla = gr.Number(value=0, precision=0, label="Variante",
+                                        info="Cambiá el número para ver otra versión inventada de la misma foto. Con el mismo número, sale siempre igual.")
                 boton = gr.Button("Ampliar", variant="primary")
                 ejemplos = _ejemplos()
                 if ejemplos:
-                    gr.Examples(ejemplos, inputs=[entrada, tipo], label="Ejemplos (fotos de dominio público)")
+                    gr.Examples(ejemplos, inputs=[entrada, tipo], label="Fotos de ejemplo (antiguas, de uso libre)")
 
             with gr.Column(scale=2):
-                comparador = gr.ImageSlider(label="Izquierda: ampliación clásica sin IA (bicúbica) · Derecha: ampliación con IA",
+                comparador = gr.ImageSlider(label="Mové la línea · Izquierda: agrandada de forma común, sin IA · Derecha: agrandada con IA",
                                             type="pil")
                 with gr.Row():
-                    mapa = gr.Image(label="Mapa de lo inventado (claro = el modelo agregó o cambió detalle)", type="pil")
-                    cajas = gr.Image(label="Lo que detecta RT-DETR en la versión con IA", type="pil")
+                    mapa = gr.Image(label="Dónde inventó la IA (más claro = más inventado)", type="pil")
+                    cajas = gr.Image(label="Lo que reconoce otra IA en la foto agrandada con IA", type="pil")
                 informe = gr.Markdown()
                 descarga = gr.File(label="Descargar resultado (lleva la leyenda \"Ampliada con IA\")")
 

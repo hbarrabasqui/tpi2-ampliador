@@ -67,7 +67,7 @@ def probar_app_con_modelos_falsos():
 
     comparacion, mapa, cajas, informe, ruta = app.procesar(EJEMPLO, "Edificios o paisajes", 20, 0, progreso=lambda *a, **k: None)
     assert comparacion[0].size == comparacion[1].size
-    assert "inventado" in informe and "RT-DETR" in informe
+    assert "inventad" in informe and "Chequeo con otra IA" in informe
     assert os.path.exists(ruta)
     app.crear_interfaz()  # que la interfaz se arme sin errores
     print("OK app de punta a punta con modelos falsos")

@@ -26,6 +26,9 @@ ETIQUETAS = {
     "potted plant": "planta", "dining table": "mesa", "book": "libro", "vase": "florero",
     "bottle": "botella", "cell phone": "celular", "tv": "televisor", "laptop": "notebook",
     "train": "tren", "traffic light": "semáforo", "cow": "vaca", "sheep": "oveja", "teddy bear": "peluche",
+    "cake": "torta", "pizza": "pizza", "donut": "dona", "sandwich": "sándwich", "apple": "manzana",
+    "orange": "naranja", "banana": "banana", "backpack": "mochila", "suitcase": "valija", "kite": "barrilete",
+    "couch": "sillón", "bed": "cama", "airplane": "avión", "elephant": "elefante", "bear": "oso",
 }
 
 _detector = None
@@ -64,7 +67,7 @@ def _contar(detecciones: list[dict]) -> Counter:
 
 def _describir(conteo: Counter) -> str:
     if not conteo:
-        return "nada (con confianza suficiente)"
+        return "nada que pudiera reconocer con seguridad"
     return ", ".join(f"{cantidad} {nombre}" for nombre, cantidad in conteo.most_common())
 
 
@@ -82,6 +85,6 @@ def comparar(sin_ia: Image.Image, con_ia: Image.Image) -> dict:
     return {
         "texto_sin_ia": _describir(conteo_antes),
         "texto_con_ia": _describir(conteo_despues),
-        "cambios": cambios,
+        "cambios": cambios,  # texto simple: "aparecieron 1 perro"
         "imagen_con_cajas": dibujar_cajas(con_ia, despues),
     }
