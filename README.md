@@ -2,6 +2,9 @@
 
 > Amplía 4 veces una foto de baja resolución con un modelo de difusión y muestra qué detalles **inventó** la IA.
 
+**Trabajo Integrador N°2** · Procesamiento Digital de Imágenes e Introducción a Visión por Computadora · IFTS 24
+**Autor:** Horacio Barrabasqui · **Fecha de entrega:** 18 de noviembre de 2026
+
 ![La app con el retrato de 1860: comparador, mapa de lo inventado, detecciones e informe](docs/img/app.png)
 
 ![Paso 3 de la app: chequeo con una segunda IA, y resumen con consejos](docs/img/app_chequeo.png)
@@ -259,7 +262,7 @@ Aprendí que una foto "mejorada" con IA puede verse perfecta y aun así no ser r
 **Horacio Barrabasqui**
 Estudiante de Tecnicatura Superior en Ciencias de Datos e IA — IFTS 24
 Materia: Procesamiento Digital de Imágenes e Introducción a Visión por Computadora
-Año: 2026
+Fecha de entrega: 18 de noviembre de 2026
 
 GitHub: https://github.com/hbarrabasqui
 
