@@ -45,8 +45,7 @@ Lo que la diferencia de un "mejorador de fotos" común: no promete recuperar nad
 
 ## Demo
 
-<!-- PENDIENTE: link al video de 5 minutos (que se abra sin iniciar sesión) -->
-Video: _[link]_
+Video de la demo: https://drive.google.com/file/d/1v7yMFz8NyoVb3bEKX7j9vZb_ZSTfsRqg/view
 
 ## Qué es real y qué es inventado
 
@@ -208,9 +207,9 @@ Es la última versión publicada en PyPI compilada para CUDA 12.8. Las siguiente
 ## Uso de agentes de IA
 
 - **Herramienta:** Claude (Anthropic), modelo Opus 5.5, trabajando sobre el repositorio.
-- **Qué decidí yo:** <!-- PENDIENTE (Horacio): revisar y completar con tus palabras --> la sub-tarea (super-resolución); ejecutar en Colab por no tener GPU; la persona usuaria (descarté a un amigo que fotografía pájaros, porque el detector no distingue especies); que la app hable sin jerga técnica; que la segunda IA se vea en la app y explique qué tan confiable es; _[completar]_.
-- **Qué propuso el agente y cómo lo revisé:** la estructura del código, comparar contra la bicúbica (y no contra el original) para el mapa y el detector, fijar PyTorch 2.10.0, la medida de coherencia, el script de evidencias con la verdad. _[completar: cómo lo revisaste]_
-- **Qué descarté y por qué:** _[completar]_
+- **Qué decidí yo:** decidí que la app tenía que poder usarla alguien sin conocimientos técnicos. Cuando vi la primera versión, los textos hablaban de "bicúbica" y "RT-DETR", y una persona común no iba a entender nada. Pedí que se explicara en palabras simples para qué sirve la app y qué muestra cada resultado. También pedí que la segunda IA se viera en la pantalla, porque el informe la mencionaba pero nadie podía ver qué había reconocido. Además elegí la sub-tarea (super-resolución), ejecutar en Colab por no tener GPU y la persona usuaria (descarté a un amigo que fotografía pájaros, porque el detector no distingue especies).
+- **Qué propuso el agente y cómo lo revisé:** la estructura del código, comparar contra la bicúbica (y no contra el original) para el mapa y el detector, fijar PyTorch 2.10.0, la medida de coherencia, el script de evidencias con la verdad. Revisé cada versión corriendo la app en Colab con los ejemplos y pedí cambios cuando algo no se entendía (por ejemplo, el "perro" sin explicación).
+- **Qué descarté y por qué:** descarté la sub-tarea C (fotos antiguas y color) porque sus modelos no entran en la GPU gratuita de Colab, y descarté usar SigLIP como análisis porque, como advierte el material de la materia, casi no distingue entre versiones.
 - El agente no pudo descargar los modelos en su entorno: las pruebas con modelos reales las corrí yo en Colab y el agente leyó los resultados desde mi Drive.
 
 ## Limitaciones conocidas
@@ -245,7 +244,7 @@ En las cuatro fotos la bicúbica queda **más cerca de la verdad** que la difusi
 
 ## Reflexiones y aprendizajes
 
-<!-- PENDIENTE (Horacio): 1 o 2 párrafos con tus palabras -->
+Aprendí que una foto "mejorada" con IA puede verse perfecta y aun así no ser real. En el retrato de 1860, la cara agrandada parecía la misma, pero otra IA dejó de reconocer a una persona. Ahora, cuando veo una foto restaurada, me pregunto qué parte estaba en la original y qué parte se inventó. También aprendí que el chequeo con otra IA sirve como alarma, pero no como prueba, porque también se equivoca.
 
 ## Recursos y referencias
 
