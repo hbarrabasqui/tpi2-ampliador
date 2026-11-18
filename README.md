@@ -2,6 +2,7 @@
 
 > Amplía 4 veces una foto de baja resolución con un modelo de difusión y muestra qué detalles **inventó** la IA.
 
+<!-- PENDIENTE: reemplazar docs/img/app.png y app_avisos.png por capturas de la versión con textos simples -->
 ![La app con el retrato de 1860: comparador, mapa de lo inventado, detecciones e informe](docs/img/app.png)
 
 ![Final del informe: verificación con RT-DETR y avisos antes de usar la foto](docs/img/app_avisos.png)
@@ -57,7 +58,7 @@ Algo más sutil: en el retrato, la **mancha oscura sobre el ojo** es daño de la
 - Control de **libertad para inventar** (`noise_level`) y **semilla**.
 - Aviso fijo arriba de todo y aviso específico según el tipo de foto (caras, edificios).
 
-En la app (captura de arriba) el informe lo dice explícitamente: *"Atención: aparecieron 1 perro; desaparecieron 1 persona."*
+En la app, el resumen se lo explica a la persona usuaria sin tecnicismos: *"Atención: la IA cambió mucho a las personas. En tu foto agrandada sin IA se reconoce 1 persona; en la versión con IA, la segunda IA ya no reconoce a ninguna persona… Mirá bien las caras antes de compartir la foto."* El detalle técnico (que RT-DETR vio un perro, con el recuadro) queda en una sección plegable, "Detalles técnicos", para no confundir a quien no sabe qué es un detector de objetos.
 
 **Advertencia a la persona usuaria.** "Esta herramienta no recupera lo que tu foto perdió. Un modelo de IA inventa detalles creíbles. Usá el resultado para mirar o compartir, no como prueba de cómo era algo o alguien." El archivo descargado lleva una franja visible y metadatos que dicen "Ampliada con IA".
 

@@ -65,9 +65,10 @@ def probar_app_con_modelos_falsos():
     analysis.detectar = lambda imagen: [{"label": "person", "score": 0.9,
                                          "box": {"xmin": 10, "ymin": 10, "xmax": 100, "ymax": 200}}]
 
-    comparacion, mapa, cajas, informe, ruta = app.procesar(EJEMPLO, "Edificios o paisajes", 20, 0, progreso=lambda *a, **k: None)
+    comparacion, mapa, resumen, ruta, cajas, detalle = app.procesar(EJEMPLO, "Edificios o paisajes", 20, 0, progreso=lambda *a, **k: None)
     assert comparacion[0].size == comparacion[1].size
-    assert "inventad" in informe and "Chequeo con otra IA" in informe
+    assert "Chequeo automático" in resumen and "persona" in resumen
+    assert "RT-DETR" not in resumen and "bicúbica" not in resumen  # sin jerga para la persona usuaria
     assert os.path.exists(ruta)
     app.crear_interfaz()  # que la interfaz se arme sin errores
     print("OK app de punta a punta con modelos falsos")

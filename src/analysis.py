@@ -83,6 +83,8 @@ def comparar(sin_ia: Image.Image, con_ia: Image.Image) -> dict:
         elif a > b:
             cambios.append(f"desaparecieron {a - b} {nombre}")
     return {
+        "personas_sin_ia": conteo_antes["persona"],
+        "personas_con_ia": conteo_despues["persona"],
         "texto_sin_ia": _describir(conteo_antes),
         "texto_con_ia": _describir(conteo_despues),
         "cambios": cambios,  # texto simple: "aparecieron 1 perro"
