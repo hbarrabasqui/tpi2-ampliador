@@ -17,12 +17,30 @@ Lo que la diferencia de un "mejorador de fotos" común: no promete recuperar nad
 
 ## Persona usuaria
 
-<!-- PENDIENTE (Horacio): completar con tu persona. La consigna pide definirla vos. -->
+**Nombre**: Marta
+**Edad**: 50-60 años
+**Ocupación**: docente jubilada; está digitalizando las fotos viejas de su familia.
+**Contexto tecnológico**: usa la computadora y el celular todos los días. No sabe nada de IA.
 
-**Nombre**: _[completar]_
-**Contexto**: _[completar]_
-**Problema**: _[completar]_
-**Solución**: _[completar]_
+**Problema**: "Escaneé fotos chiquitas de los años 60 y 70, y cuando las agrando para imprimirlas se ven pixeladas. Probé apps que las 'mejoran', pero no sé si la cara que aparece es de verdad la de mi mamá."
+
+**Solución actual**: apps de celular de "mejorar foto", que no le explican qué cambiaron.
+
+**Frustraciones**:
+- No entiende las herramientas técnicas.
+- No sabe qué parte del resultado es real y qué parte inventó el programa.
+
+**Objetivos**:
+- Agrandar sus fotos para imprimirlas y compartirlas.
+- Saber qué cambió la IA, sobre todo en las caras.
+
+**Contexto de uso**: en su casa, con la notebook, de a una foto por vez y sin apuro.
+
+**Cómo la ayuda el sistema**: le agranda la foto con IA y, al lado, le muestra qué detalles inventó la IA, si las personas siguen reconociéndose como personas, y le avisa en palabras simples que lo nuevo no es la foto real.
+
+### Declaración del proyecto
+
+> Mi sistema permite que Marta, docente jubilada que digitaliza fotos viejas de su familia, pueda agrandar fotos chicas escaneadas aplicando el upscaler x4 de Stable Diffusion y verificando con RT-DETR que sigan estando las mismas personas. Le advierte que los detalles finos, sobre todo las caras, son una reconstrucción de la IA y no la foto real.
 
 ## Demo
 
@@ -187,7 +205,7 @@ Es la última versión publicada en PyPI compilada para CUDA 12.8. Las siguiente
 ## Uso de agentes de IA
 
 - **Herramienta:** Claude (Anthropic), modelo Opus 5.5, trabajando sobre el repositorio.
-- **Qué decidí yo:** <!-- PENDIENTE (Horacio): revisar y completar con tus palabras --> la sub-tarea (super-resolución), ejecutar en Colab por no tener GPU, la persona usuaria, _[completar]_.
+- **Qué decidí yo:** <!-- PENDIENTE (Horacio): revisar y completar con tus palabras --> la sub-tarea (super-resolución); ejecutar en Colab por no tener GPU; la persona usuaria (descarté a un amigo que fotografía pájaros, porque el detector no distingue especies); que la app hable sin jerga técnica; que la segunda IA se vea en la app y explique qué tan confiable es; _[completar]_.
 - **Qué propuso el agente y cómo lo revisé:** la estructura del código, comparar contra la bicúbica (y no contra el original) para el mapa y el detector, fijar PyTorch 2.10.0, la medida de coherencia, el script de evidencias con la verdad. _[completar: cómo lo revisaste]_
 - **Qué descarté y por qué:** _[completar]_
 - El agente no pudo descargar los modelos en su entorno: las pruebas con modelos reales las corrí yo en Colab y el agente leyó los resultados desde mi Drive.
