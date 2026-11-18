@@ -2,10 +2,11 @@
 
 > Amplía 4 veces una foto de baja resolución con un modelo de difusión y muestra qué detalles **inventó** la IA.
 
-<!-- PENDIENTE: reemplazar docs/img/app.png y app_avisos.png por capturas de la versión con textos simples -->
 ![La app con el retrato de 1860: comparador, mapa de lo inventado, detecciones e informe](docs/img/app.png)
 
-![Final del informe: verificación con RT-DETR y avisos antes de usar la foto](docs/img/app_avisos.png)
+![Paso 3 de la app: chequeo con una segunda IA, y resumen con consejos](docs/img/app_chequeo.png)
+
+*Capturas de la app en Colab (T4) con el retrato de 1860 y "Cuánto puede inventar la IA" en 85.*
 
 ## Descripción
 
@@ -76,7 +77,9 @@ Algo más sutil: en el retrato, la **mancha oscura sobre el ojo** es daño de la
 - Control de **libertad para inventar** (`noise_level`) y **semilla**.
 - Aviso fijo arriba de todo y aviso específico según el tipo de foto (caras, edificios).
 
-En la app, el paso 3 ("Chequeo con una segunda IA") muestra las dos fotos lado a lado con sus recuadros (persona 90 % / perro 59 %) y se lo explica a la persona usuaria sin tecnicismos: *"Atención: la IA cambió mucho a las personas. En la versión con IA, la segunda IA ya no reconoce a la persona que sí reconoce en la versión sin IA. En su lugar ve: perro. Eso no está en tu foto: la segunda IA se confundió porque la cara o el cuerpo quedaron muy cambiados."*
+En la app, el paso 3 ("Chequeo con una segunda IA") muestra las dos versiones lado a lado con sus recuadros. Con el valor por defecto (libertad 20, variante 0) el resultado se repite siempre: la segunda IA reconoce una persona sin IA y un perro con IA, y la app se lo explica a la persona usuaria sin tecnicismos: *"Atención: la IA cambió mucho a las personas. En la versión con IA, la segunda IA ya no reconoce a la persona que sí reconoce en la versión sin IA. En su lugar ve: perro. Eso no está en tu foto: la segunda IA se confundió porque la cara o el cuerpo quedaron muy cambiados."*
+
+**Y el caso contrario, que muestra el límite del chequeo:** con libertad 85 (captura de arriba), la cara cambia a simple vista (más lisa y más clara que en la versión sin IA), pero la segunda IA reconoce "persona" en las dos versiones. El chequeo solo detecta cambios grandes: que una persona siga siendo "una persona" no quiere decir que sea **la misma** persona.
 
 **Advertencia a la persona usuaria.** "Esta herramienta no recupera lo que tu foto perdió. Un modelo de IA inventa detalles creíbles. Usá el resultado para mirar o compartir, no como prueba de cómo era algo o alguien." El archivo descargado lleva una franja visible y metadatos que dicen "Ampliada con IA".
 
