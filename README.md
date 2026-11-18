@@ -2,7 +2,7 @@
 
 > Amplía 4 veces una foto de baja resolución con un modelo de difusión y muestra qué detalles **inventó** la IA.
 
-<!-- PENDIENTE: captura de la app funcionando (docs/img/app.png) -->
+![La app con el retrato de 1860: comparador, mapa de lo inventado, detecciones e informe](docs/img/app.png)
 
 ## Descripción
 
@@ -55,7 +55,7 @@ Algo más sutil: en el retrato, la **mancha oscura sobre el ojo** es daño de la
 - Control de **libertad para inventar** (`noise_level`) y **semilla**.
 - Aviso fijo arriba de todo y aviso específico según el tipo de foto (caras, edificios).
 
-<!-- PENDIENTE: captura de la app (docs/img/app.png) -->
+En la app (captura de arriba) el informe lo dice explícitamente: *"Atención: aparecieron 1 perro; desaparecieron 1 persona."*
 
 **Advertencia a la persona usuaria.** "Esta herramienta no recupera lo que tu foto perdió. Un modelo de IA inventa detalles creíbles. Usá el resultado para mirar o compartir, no como prueba de cómo era algo o alguien." El archivo descargado lleva una franja visible y metadatos que dicen "Ampliada con IA".
 
@@ -142,7 +142,7 @@ Abrí [`colab/ejecutar_en_colab.ipynb`](colab/ejecutar_en_colab.ipynb) en Colab,
 5. Mové el deslizador del comparador, mirá el mapa de lo inventado y leé el informe.
 6. Descargá el resultado (lleva la leyenda "Ampliada con IA").
 
-<!-- PENDIENTE: capturas de cada paso -->
+La captura del principio muestra la app después de ampliar el retrato de ejemplo en Colab (T4): la ampliación tardó 5 segundos.
 
 ## Decisiones de diseño
 
